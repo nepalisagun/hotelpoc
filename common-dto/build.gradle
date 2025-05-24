@@ -2,10 +2,11 @@ plugins {
     id 'java-library'
 }
 
+// Prevent Spring Boot plugin from being applied to this module
+
 dependencies {
     api 'jakarta.validation:jakarta.validation-api:3.0.2'
     api 'com.fasterxml.jackson.core:jackson-annotations:2.15.4'
-
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
 }
