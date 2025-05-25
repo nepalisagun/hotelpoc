@@ -9,8 +9,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class HotelServiceImplTest {
@@ -41,5 +44,77 @@ public class HotelServiceImplTest {
                 .verifyComplete();
 
         verify(hotelRepository, times(1)).findAll();
+    }
+
+    @Test
+    void testGetAllHotels_EmptyList() {
+        when(hotelRepository.findAll()).thenReturn(Flux.empty());
+
+        StepVerifier.create(hotelService.getAllHotels())
+                .expectComplete()
+                .verify();
+
+        verify(hotelRepository, times(1)).findAll();
+    }
+
+    @Test
+    void testGetHotelById_NotFound() {
+        String hotelId = "999";
+        when(hotelRepository.findById(hotelId)).thenReturn(Mono.empty());
+
+        StepVerifier.create(hotelService.getHotelById(Integer.parseInt(hotelId)))
+                .expectError(IllegalArgumentException.class)
+                .verify();
+
+        verify(hotelRepository, times(1)).findById(hotelId);
+    }
+
+    @Test
+    void testCreateHotel_NullHotel() {
+        StepVerifier.create(hotelService.createHotel(null))
+                .expectError(IllegalArgumentException.class)
+                .verify();
+
+        verify(hotelRepository, never()).save(any());
+    }
+
+    @Test
+    void testCreateHotel_InvalidId() {
+        Hotel hotel = new Hotel();
+        hotel.setId("invalid-id");
+
+        StepVerifier.create(hotelService.createHotel(hotel))
+                .expectError(IllegalArgumentException.class)
+                .verify();
+
+        verify(hotelRepository, never()).save(any());
+    }
+
+    @Test
+    void testUpdateHotel_NotFound() {
+        String hotelId = "999";
+        Hotel hotel = new Hotel();
+        hotel.setId(hotelId);
+        when(hotelRepository.findById(hotelId)).thenReturn(Mono.empty());
+
+        StepVerifier.create(hotelService.updateHotel(Integer.parseInt(hotelId), hotel))
+                .expectError(IllegalArgumentException.class)
+                .verify();
+
+        verify(hotelRepository, times(1)).findById(hotelId);
+        verify(hotelRepository, never()).save(any());
+    }
+
+    @Test
+    void testDeleteHotel_NotFound() {
+        String hotelId = "999";
+        when(hotelRepository.findById(hotelId)).thenReturn(Mono.empty());
+
+        StepVerifier.create(hotelService.deleteHotel(Integer.parseInt(hotelId)))
+                .expectError(IllegalArgumentException.class)
+                .verify();
+
+        verify(hotelRepository, times(1)).findById(hotelId);
+        verify(hotelRepository, never()).deleteById(anyString());
     }
 } 

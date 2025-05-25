@@ -23,22 +23,52 @@ public class HotelServiceImpl implements HotelService {
 
   @Override
   public Mono<Hotel> getHotelById(Integer id) {
-    return hotelRepository.findById(id.toString());
+    if (id == null) {
+      return Mono.error(new IllegalArgumentException("Hotel ID cannot be null"));
+    }
+    return hotelRepository.findById(id.toString())
+            .switchIfEmpty(Mono.error(new IllegalArgumentException("Hotel not found with id: " + id)));
   }
 
   @Override
   public Mono<Void> deleteHotel(Integer id) {
-    return hotelRepository.deleteById(id.toString());
+    if (id == null) {
+      return Mono.error(new IllegalArgumentException("Hotel ID cannot be null"));
+    }
+    return hotelRepository.findById(id.toString())
+            .switchIfEmpty(Mono.error(new IllegalArgumentException("Hotel not found with id: " + id)))
+            .flatMap(hotel -> hotelRepository.deleteById(id.toString()));
   }
 
   @Override
   public Mono<Void> updateHotel(Integer id, Hotel hotel) {
-    hotel.setId(id.toString());
-    return hotelRepository.save(hotel).then();
+    if (id == null) {
+      return Mono.error(new IllegalArgumentException("Hotel ID cannot be null"));
+    }
+    if (hotel == null) {
+      return Mono.error(new IllegalArgumentException("Hotel cannot be null"));
+    }
+    return hotelRepository.findById(id.toString())
+            .switchIfEmpty(Mono.error(new IllegalArgumentException("Hotel not found with id: " + id)))
+            .flatMap(existingHotel -> {
+              hotel.setId(id.toString());
+              return hotelRepository.save(hotel).then();
+            });
   }
 
   @Override
   public Mono<Void> createHotel(Hotel hotel) {
-    return hotelRepository.save(hotel).then();
+    if (hotel == null) {
+      return Mono.error(new IllegalArgumentException("Hotel cannot be null"));
+    }
+    try {
+      // Validate ID format if present
+      if (hotel.getId() != null) {
+        Integer.parseInt(hotel.getId());
+      }
+      return hotelRepository.save(hotel).then();
+    } catch (NumberFormatException e) {
+      return Mono.error(new IllegalArgumentException("Invalid hotel ID format"));
+    }
   }
 }
