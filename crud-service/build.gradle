@@ -19,21 +19,22 @@ dependencies {
     implementation 'javax.validation:validation-api:2.0.1.Final'
     implementation 'org.springframework:spring-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 }
 
 openApiGenerate {
     generatorName = "spring"
     inputSpec = "$rootDir/crud-service/src/main/resources/api/crud-api.yaml"
     outputDir = "$buildDir/generated"
-    apiPackage = "com.example.hotel.crud.api"
-    modelPackage = "com.example.hotel.crud.model.gen"
-    invokerPackage = "com.example.hotel.crud.invoker"
-    modelNameSuffix = "Gen"
-    generateApiTests = false
-    generateModelTests = false
+    apiPackage = "com.galaxyviewtower.hotel.crud.api"
+    modelPackage = "com.galaxyviewtower.hotel.crud.model.gen"
+    invokerPackage = "com.galaxyviewtower.hotel.crud.invoker"
+    library = "spring-boot"
     configOptions = [
         interfaceOnly: "true",
         useTags: "true",
+        dateLibrary: "java8",
         reactive: "true"
     ]
 }

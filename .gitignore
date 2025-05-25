@@ -47,3 +47,6 @@ build/libs/
 # Ignore gradlew scripts if not needed in repo
 # gradlew
 # gradlew.bat
+
+# Ignore .keep marker files
+*.keep
