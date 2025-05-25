@@ -3,4 +3,6 @@ apply plugin: 'java'
 dependencies {
     implementation project(':common-dto')
     implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.kafka:spring-kafka'
 }

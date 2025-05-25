@@ -1,0 +1,98 @@
+openapi: 3.0.1
+info:
+  title: Hotel CRUD API
+  version: 1.0.0
+  description: API contract for hotel CRUD operations.
+servers:
+  - url: http://localhost:8080
+paths:
+  /hotels:
+    get:
+      summary: List all hotels
+      responses:
+        "200":
+          description: A list of hotels
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Hotel"
+    post:
+      summary: Create a new hotel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Hotel"
+      responses:
+        "201":
+          description: Hotel created
+  /hotels/{id}:
+    get:
+      summary: Get a hotel by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Hotel details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Hotel"
+        "404":
+          description: Hotel not found
+    put:
+      summary: Update a hotel by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Hotel"
+      responses:
+        "200":
+          description: Hotel updated
+        "404":
+          description: Hotel not found
+    delete:
+      summary: Delete a hotel by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Hotel deleted
+        "404":
+          description: Hotel not found
+components:
+  schemas:
+    Hotel:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+        rating:
+          type: number
+          format: float
+      required:
+        - name
+        - address
