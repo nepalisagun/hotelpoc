@@ -11,3 +11,37 @@ spring:
   sql:
     init:
       mode: always # Always run schema.sql
+  zipkin:
+    base-url: ${SPRING_ZIPKIN_BASE_URL:http://localhost:9411}
+  sleuth:
+    otel:
+      config:
+        trace:
+          sampler:
+            probability: 1.0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    export:
+      prometheus:
+        enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+    enabled: true
+
+logging:
+  level:
+    com.galaxyviewtower.hotel: DEBUG
+    io.micrometer: INFO
