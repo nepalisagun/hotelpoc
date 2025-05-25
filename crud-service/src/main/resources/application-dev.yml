@@ -1,0 +1,31 @@
+spring:
+  r2dbc:
+    url: r2dbc:h2:mem:///hoteldb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    pool:
+      initial-size: 5
+      max-size: 20
+      max-idle-time: 30m
+      max-acquire-time: 30s
+      validation-query: SELECT 1
+      validation-depth: remote
+    properties:
+      ssl: false
+      tcpKeepAlive: true
+      tcpNoDelay: true
+      prepareCacheSize: 256
+      prepareCacheMaxSize: 1024
+      prepareCacheMaxLifeTime: 30m
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+logging:
+  level:
+    root: INFO
+    com.galaxyviewtower.hotel: DEBUG
+    io.r2dbc.h2: DEBUG
+    org.springframework.r2dbc: DEBUG
+    io.r2dbc.pool: DEBUG

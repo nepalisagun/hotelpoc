@@ -1,11 +1,18 @@
-CREATE TABLE IF NOT EXISTS hotel (
-    id VARCHAR(36) PRIMARY KEY,
+-- Drop existing tables if they exist
+DROP TABLE IF EXISTS hotels;
+
+-- Create hotels table
+CREATE TABLE hotels (
+    id VARCHAR(255) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    city VARCHAR(255),
-    price_per_night DECIMAL(10, 2)
+    address VARCHAR(255) NOT NULL,
+    rating DECIMAL(3,1) NOT NULL
 );
 
--- Pre-populate some data (optional, good for testing)
-DELETE FROM hotel;
-INSERT INTO hotel (id, name, city, price_per_night) VALUES ('h1', 'Grand Hyatt', 'New York', 350.75);
-INSERT INTO hotel (id, name, city, price_per_night) VALUES ('h2', 'Hilton Downtown', 'Chicago', 280.00);
+-- Insert test data
+INSERT INTO hotels (id, name, address, rating) VALUES
+    ('1', 'Grand Hotel', '123 Main Street, City Center', 4.5),
+    ('2', 'Seaside Resort', '456 Beach Road, Coastal Area', 4.8),
+    ('3', 'Mountain View Lodge', '789 Hill Street, Mountain Area', 4.2),
+    ('4', 'Business Hotel', '321 Corporate Avenue, Business District', 4.0),
+    ('5', 'Boutique Inn', '654 Art Street, Cultural District', 4.7);

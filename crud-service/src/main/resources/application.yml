@@ -9,6 +9,8 @@ server:
 spring:
   application:
     name: crud-service
+  profiles:
+    active: dev
   r2dbc:
     url: r2dbc:postgresql://localhost:5432/hotel
     username: postgres
