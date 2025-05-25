@@ -6,7 +6,6 @@ import com.galaxyviewtower.hotel.crud.model.gen.Hotel;
 import com.galaxyviewtower.hotel.crud.service.HotelService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -24,8 +23,8 @@ public class HotelControllerImpl implements DefaultApi {
   @Override
   public Mono<ResponseEntity<Flux<Hotel>>> hotelsGet(ServerWebExchange exchange) {
     log.info("CRUD: Received hotelsGet request");
-    Flux<Hotel> hotels = hotelService.getAllHotels().map(hotelMapper::toDto);
-    return Mono.just(ResponseEntity.ok(hotels));
+    return Mono.just(ResponseEntity.ok(hotelService.getAllHotels().map(hotelMapper::toDto)))
+        .doOnError(e -> log.error("CRUD: Error getting hotels: {}", e.getMessage()));
   }
 
   @Override
@@ -35,7 +34,6 @@ public class HotelControllerImpl implements DefaultApi {
         .getHotelById(id)
         .map(hotelMapper::toDto)
         .map(ResponseEntity::ok)
-        .defaultIfEmpty(ResponseEntity.notFound().build())
         .doOnError(e -> log.error("CRUD: Error getting hotel {}: {}", id, e.getMessage()));
   }
 
@@ -55,7 +53,7 @@ public class HotelControllerImpl implements DefaultApi {
     return hotel
         .map(hotelMapper::toEntity)
         .flatMap(h -> hotelService.updateHotel(id, h))
-        .then(Mono.just(ResponseEntity.ok().<Void>build()))
+        .then(Mono.just(ResponseEntity.noContent().<Void>build()))
         .doOnError(e -> log.error("CRUD: Error updating hotel {}: {}", id, e.getMessage()));
   }
 
@@ -65,7 +63,7 @@ public class HotelControllerImpl implements DefaultApi {
     return hotel
         .map(hotelMapper::toEntity)
         .flatMap(h -> hotelService.createHotel(h))
-        .then(Mono.just(ResponseEntity.status(HttpStatus.CREATED).<Void>build()))
+        .then(Mono.just(ResponseEntity.created(exchange.getRequest().getURI()).<Void>build()))
         .doOnError(e -> log.error("CRUD: Error creating hotel: {}", e.getMessage()));
   }
 }
