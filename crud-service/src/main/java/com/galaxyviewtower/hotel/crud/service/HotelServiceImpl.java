@@ -3,11 +3,13 @@ package com.galaxyviewtower.hotel.crud.service;
 import com.galaxyviewtower.hotel.crud.mapper.HotelMapper;
 import com.galaxyviewtower.hotel.crud.model.Hotel;
 import com.galaxyviewtower.hotel.crud.repository.HotelRepository;
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Service
 @RequiredArgsConstructor
@@ -16,9 +18,17 @@ public class HotelServiceImpl implements HotelService {
   private final HotelRepository hotelRepository;
   private final HotelMapper hotelMapper;
 
+  private static final Duration TIMEOUT = Duration.ofSeconds(5);
+  private static final int BUFFER_SIZE = 100;
+
   @Override
   public Flux<Hotel> getAllHotels() {
-    return hotelRepository.findAll();
+    return hotelRepository
+        .findAll()
+        .timeout(TIMEOUT)
+        .onBackpressureBuffer(BUFFER_SIZE)
+        .publishOn(Schedulers.boundedElastic())
+        .doOnError(e -> log.error("Error fetching hotels: {}", e.getMessage()));
   }
 
   @Override
@@ -28,7 +38,10 @@ public class HotelServiceImpl implements HotelService {
     }
     return hotelRepository
         .findById(id.toString())
-        .switchIfEmpty(Mono.error(new IllegalArgumentException("Hotel not found with id: " + id)));
+        .timeout(TIMEOUT)
+        .publishOn(Schedulers.boundedElastic())
+        .switchIfEmpty(Mono.error(new IllegalArgumentException("Hotel not found with id: " + id)))
+        .doOnError(e -> log.error("Error fetching hotel {}: {}", id, e.getMessage()));
   }
 
   @Override
@@ -38,8 +51,11 @@ public class HotelServiceImpl implements HotelService {
     }
     return hotelRepository
         .findById(id.toString())
+        .timeout(TIMEOUT)
         .switchIfEmpty(Mono.error(new IllegalArgumentException("Hotel not found with id: " + id)))
-        .flatMap(hotel -> hotelRepository.deleteById(id.toString()));
+        .flatMap(hotel -> hotelRepository.deleteById(id.toString()))
+        .publishOn(Schedulers.boundedElastic())
+        .doOnError(e -> log.error("Error deleting hotel {}: {}", id, e.getMessage()));
   }
 
   @Override
@@ -52,12 +68,16 @@ public class HotelServiceImpl implements HotelService {
     }
     return hotelRepository
         .findById(id.toString())
+        .timeout(TIMEOUT)
         .switchIfEmpty(Mono.error(new IllegalArgumentException("Hotel not found with id: " + id)))
         .flatMap(
             existingHotel -> {
               hotel.setId(id.toString());
-              return hotelRepository.save(hotel).then();
-            });
+              return hotelRepository.save(hotel);
+            })
+        .publishOn(Schedulers.boundedElastic())
+        .then()
+        .doOnError(e -> log.error("Error updating hotel {}: {}", id, e.getMessage()));
   }
 
   @Override
@@ -70,7 +90,12 @@ public class HotelServiceImpl implements HotelService {
       if (hotel.getId() != null) {
         Integer.parseInt(hotel.getId());
       }
-      return hotelRepository.save(hotel).then();
+      return hotelRepository
+          .save(hotel)
+          .timeout(TIMEOUT)
+          .publishOn(Schedulers.boundedElastic())
+          .then()
+          .doOnError(e -> log.error("Error creating hotel: {}", e.getMessage()));
     } catch (NumberFormatException e) {
       return Mono.error(new IllegalArgumentException("Invalid hotel ID format"));
     }

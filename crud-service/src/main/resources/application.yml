@@ -1,13 +1,47 @@
 server:
   port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: never
+    include-exception: false
 
 spring:
   application:
     name: crud-service
   r2dbc:
-    url: r2dbc:h2:mem:///hoteldb;DB_CLOSE_DELAY=-1;
-    username: sa
-    password:
+    url: r2dbc:postgresql://localhost:5432/hotel
+    username: postgres
+    password: postgres
+    pool:
+      initial-size: 5
+      max-size: 20
+      max-idle-time: 30m
+      max-acquire-time: 30s
+      validation-query: SELECT 1
+      validation-depth: remote
+    properties:
+      ssl: false
+      tcpKeepAlive: true
+      tcpNoDelay: true
+      prepareCacheSize: 256
+      prepareCacheMaxSize: 1024
+      prepareCacheMaxLifeTime: 30m
   sql:
     init:
       mode: always # Always run schema.sql
+  webflux:
+    base-path: /api/v1
+    static-path-pattern: /static/**
+    resources:
+      static-locations: classpath:/static/
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+logging:
+  level:
+    root: INFO
+    com.galaxyviewtower.hotel: DEBUG
+    io.r2dbc.postgresql: INFO
+    org.springframework.r2dbc: INFO
+    io.r2dbc.pool: DEBUG
