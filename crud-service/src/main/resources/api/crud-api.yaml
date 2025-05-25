@@ -88,11 +88,17 @@ components:
           type: integer
         name:
           type: string
+          minLength: 2
+          maxLength: 100
         address:
           type: string
+          minLength: 5
+          maxLength: 200
         rating:
           type: number
           format: float
+          minimum: 0
+          maximum: 5
       required:
         - name
         - address
