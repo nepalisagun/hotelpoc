@@ -1,0 +1,13 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: crud-service
+  r2dbc:
+    url: r2dbc:h2:mem:///hoteldb;DB_CLOSE_DELAY=-1;
+    username: sa
+    password:
+  sql:
+    init:
+      mode: always # Always run schema.sql

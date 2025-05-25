@@ -1,19 +1,52 @@
-.gradle/8.14/gc.properties
-.gradle/8.14/checksums/checksums.lock
-.gradle/8.14/checksums/md5-checksums.bin
-.gradle/8.14/checksums/sha1-checksums.bin
-.gradle/8.14/fileChanges/last-build.bin
-.gradle/8.14/fileHashes/fileHashes.bin
-.gradle/8.14/fileHashes/fileHashes.lock
-.gradle/8.8/gc.properties
-.gradle/8.8/checksums/checksums.lock
-.gradle/8.8/checksums/md5-checksums.bin
-.gradle/8.8/checksums/sha1-checksums.bin
-.gradle/8.8/dependencies-accessors/gc.properties
-.gradle/8.8/fileChanges/last-build.bin
-.gradle/8.8/fileHashes/fileHashes.bin
-.gradle/8.8/fileHashes/fileHashes.lock
-.gradle/buildOutputCleanup/buildOutputCleanup.lock
-.gradle/buildOutputCleanup/cache.properties
-.gradle/vcs-1/gc.properties
+.gradle/*
 build/reports/problems/problems-report.html
+
+# Gradle build output
+build/
+.gradle/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and temp
+*.log
+*.tmp
+
+# Generated sources
+crud-service/build/
+booking-service/build/
+common-dto/build/
+
+# Ignore jar/war/ear files
+*.jar
+*.war
+*.ear
+
+# Ignore local env files
+.env
+
+# Ignore test reports
+**/reports/
+
+# Ignore annotation processor output
+**/generated/
+
+# Explicitly ignore build/libs
+build/libs/
+*/build/libs/
+
+# Ignore VS Code workspace settings
+.vscode/settings.json
+
+# Ignore gradlew scripts if not needed in repo
+# gradlew
+# gradlew.bat
+
+# Ignore .keep marker files
+*.keep
