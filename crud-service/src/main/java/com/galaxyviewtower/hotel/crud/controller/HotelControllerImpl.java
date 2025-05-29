@@ -28,7 +28,7 @@ public class HotelControllerImpl implements DefaultApi {
   }
 
   @Override
-  public Mono<ResponseEntity<Hotel>> hotelsIdGet(Integer id, ServerWebExchange exchange) {
+  public Mono<ResponseEntity<Hotel>> hotelsIdGet(String id, ServerWebExchange exchange) {
     log.info("CRUD: Received hotelsIdGet request for ID: {}", id);
     return hotelService
         .getHotelById(id)
@@ -38,7 +38,7 @@ public class HotelControllerImpl implements DefaultApi {
   }
 
   @Override
-  public Mono<ResponseEntity<Void>> hotelsIdDelete(Integer id, ServerWebExchange exchange) {
+  public Mono<ResponseEntity<Void>> hotelsIdDelete(String id, ServerWebExchange exchange) {
     log.info("CRUD: Received hotelsIdDelete request for ID: {}", id);
     return hotelService
         .deleteHotel(id)
@@ -48,7 +48,7 @@ public class HotelControllerImpl implements DefaultApi {
 
   @Override
   public Mono<ResponseEntity<Void>> hotelsIdPut(
-      Integer id, Mono<Hotel> hotel, ServerWebExchange exchange) {
+      String id, Mono<Hotel> hotel, ServerWebExchange exchange) {
     log.info("CRUD: Received hotelsIdPut request for ID: {}", id);
     return hotel
         .map(hotelMapper::toEntity)

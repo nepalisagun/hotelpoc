@@ -7,11 +7,13 @@ import reactor.core.publisher.Mono;
 public interface HotelService {
   Flux<Hotel> getAllHotels();
 
-  Mono<Hotel> getHotelById(Integer id);
+  Mono<Hotel> getHotelById(String id);
 
-  Mono<Void> deleteHotel(Integer id);
+  Mono<Void> deleteHotel(String id);
 
-  Mono<Void> updateHotel(Integer id, Hotel hotel);
+  Mono<Void> updateHotel(String id, Hotel hotel);
 
   Mono<Void> createHotel(Hotel hotel);
+
+  Flux<Hotel> searchHotels(String city, String country, Double minRating, Double maxPrice);
 }

@@ -1,0 +1,40 @@
+spring:
+  r2dbc:
+    url: r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  sql:
+    init:
+      schema-locations: classpath:schema.sql
+      mode: always
+  flyway:
+    enabled: false
+
+services:
+  crud-service:
+    url: http://localhost:8080
+
+logging:
+  level:
+    root: INFO
+    com.galaxyviewtower.hotel.booking: DEBUG
+    org.springframework.r2dbc: DEBUG
+    io.r2dbc.h2: DEBUG
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      crudService:
+        failureRateThreshold: 50
+        waitDurationInOpenState: 20s
+        permittedNumberOfCallsInHalfOpenState: 5
+        slidingWindowSize: 10
+  retry:
+    instances:
+      crudService:
+        maxAttempts: 3
+        waitDuration: 500ms
+  timelimiter:
+    instances:
+      crudService:
+        timeoutDuration: 5s

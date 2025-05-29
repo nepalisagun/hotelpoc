@@ -40,6 +40,30 @@ dependencies {
     testImplementation 'org.testcontainers:postgresql:1.19.3'
     testImplementation 'org.testcontainers:r2dbc:1.19.3'
     testImplementation 'org.testcontainers:junit-jupiter:1.19.3'
+    testImplementation 'org.testcontainers:testcontainers:1.19.7'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.11.0'
+    testImplementation 'org.awaitility:awaitility:4.2.0'
+    testImplementation 'au.com.dius.pact:consumer:4.6.8'
+    testImplementation 'au.com.dius.pact:provider:4.6.8'
+    testImplementation 'au.com.dius.pact.consumer:junit5:4.6.8'
+    testImplementation 'au.com.dius.pact.provider:junit5:4.6.8'
+
+    // Resilience4J Dependencies
+    implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.1.0'
+    implementation 'io.github.resilience4j:resilience4j-reactor:2.1.0'
+    implementation 'io.github.resilience4j:resilience4j-circuitbreaker:2.1.0'
+    implementation 'io.github.resilience4j:resilience4j-retry:2.1.0'
+    implementation 'io.github.resilience4j:resilience4j-timelimiter:2.1.0'
+    implementation 'io.github.resilience4j:resilience4j-bulkhead:2.1.0'
+    implementation 'io.github.resilience4j:resilience4j-micrometer:2.1.0'
+
+    // Logging
+    implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
+    implementation 'ch.qos.logback:logback-classic'
+    implementation 'ch.qos.logback:logback-core'
+    implementation 'org.slf4j:slf4j-api'
 }
 
 openApiGenerate {
@@ -71,5 +95,12 @@ sourceSets.main.java.srcDirs += ["$buildDir/generated/src/main/java"]
 
 tasks.named('compileJava') {
     dependsOn tasks.named('openApiGenerate')
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
 

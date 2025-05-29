@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: booking-service-test
+  r2dbc:
+    url: r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  sql:
+    init:
+      schema-locations: classpath:schema.sql
+      mode: always
+  flyway:
+    enabled: false
+
+resilience4j:
+  ratelimiter:
+    instances:
+      bookingService:
+        limitForPeriod: 2
+        limitRefreshPeriod: 1s
+        timeoutDuration: 500ms
+      availabilityCheck:
+        limitForPeriod: 3
+        limitRefreshPeriod: 1s
+        timeoutDuration: 500ms
+      userBookings:
+        limitForPeriod: 2
+        limitRefreshPeriod: 1s
+        timeoutDuration: 500ms
+
+crud:
+  service:
+    url: http://localhost:8080

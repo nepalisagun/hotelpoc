@@ -12,6 +12,8 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.stream.Collectors;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -35,40 +37,41 @@ public class GlobalExceptionHandler {
     }
   }
 
-  @ExceptionHandler(WebExchangeBindException.class)
-  public Mono<ResponseEntity<ErrorResponse>> handleValidationException(
-      WebExchangeBindException ex, ServerWebExchange exchange) {
-    Map<String, String> errors = new HashMap<>();
-    ex.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-
-    ErrorResponse errorResponse =
-        new ErrorResponse(
-            HttpStatus.BAD_REQUEST,
-            "Validation failed",
-            exchange.getRequest().getPath().value(),
-            errors);
-
-    return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse));
+  @ExceptionHandler(ValidationException.class)
+  public Mono<ResponseEntity<Map<String, Object>>> handleValidationException(ValidationException ex) {
+    Map<String, Object> response = new HashMap<>();
+    response.put("status", HttpStatus.BAD_REQUEST.value());
+    response.put("error", "Validation Error");
+    response.put("message", ex.getErrors());
+    return Mono.just(ResponseEntity.badRequest().body(response));
   }
 
-  @ExceptionHandler(IllegalArgumentException.class)
-  public Mono<ResponseEntity<ErrorResponse>> handleIllegalArgumentException(
-      IllegalArgumentException ex, ServerWebExchange exchange) {
-    ErrorResponse errorResponse =
-        new ErrorResponse(
-            HttpStatus.BAD_REQUEST, ex.getMessage(), exchange.getRequest().getPath().value(), null);
-    return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse));
+  @ExceptionHandler(WebExchangeBindException.class)
+  public Mono<ResponseEntity<Map<String, Object>>> handleWebExchangeBindException(WebExchangeBindException ex) {
+    Map<String, Object> response = new HashMap<>();
+    response.put("status", HttpStatus.BAD_REQUEST.value());
+    response.put("error", "Validation Error");
+    response.put("message", ex.getBindingResult().getFieldErrors().stream()
+            .map(error -> error.getField() + ": " + error.getDefaultMessage())
+            .collect(Collectors.toList()));
+    return Mono.just(ResponseEntity.badRequest().body(response));
+  }
+
+  @ExceptionHandler(JwtAuthenticationException.class)
+  public Mono<ResponseEntity<Map<String, Object>>> handleJwtAuthenticationException(JwtAuthenticationException ex) {
+    Map<String, Object> response = new HashMap<>();
+    response.put("status", HttpStatus.UNAUTHORIZED.value());
+    response.put("error", "Authentication Error");
+    response.put("message", ex.getMessage());
+    return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response));
   }
 
   @ExceptionHandler(Exception.class)
-  public Mono<ResponseEntity<ErrorResponse>> handleGenericException(
-      Exception ex, ServerWebExchange exchange) {
-    ErrorResponse errorResponse =
-        new ErrorResponse(
-            HttpStatus.INTERNAL_SERVER_ERROR,
-            "An unexpected error occurred",
-            exchange.getRequest().getPath().value(),
-            Map.of("error", ex.getMessage()));
-    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse));
+  public Mono<ResponseEntity<Map<String, Object>>> handleGenericException(Exception ex) {
+    Map<String, Object> response = new HashMap<>();
+    response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+    response.put("error", "Internal Server Error");
+    response.put("message", "An unexpected error occurred");
+    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response));
   }
 }

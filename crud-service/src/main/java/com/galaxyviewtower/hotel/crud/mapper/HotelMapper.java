@@ -11,29 +11,34 @@ public interface HotelMapper {
   // Map from entity to OpenAPI model
   @Mapping(
       target = "id",
-      expression =
-          "java(entityHotel.getId() != null ? entityHotel.getId() : null)") // Use String for id
+      expression = "java(entityHotel.getId() != null ? java.util.UUID.fromString(entityHotel.getId()) : null)")
   @Mapping(target = "name", source = "name")
   @Mapping(target = "address", source = "address")
+  @Mapping(target = "city", source = "city")
+  @Mapping(target = "country", source = "country")
   @Mapping(
       target = "rating",
-      expression =
-          "java(entityHotel.getRating() != null ? entityHotel.getRating().floatValue() : null)")
+      expression = "java(entityHotel.getRating() != null ? entityHotel.getRating().floatValue() : null)")
+  @Mapping(target = "totalRooms", source = "totalRooms")
+  @Mapping(target = "pricePerNight", source = "pricePerNight")
+  @Mapping(target = "isActive", source = "active")
   com.galaxyviewtower.hotel.crud.model.gen.Hotel toDto(
       com.galaxyviewtower.hotel.crud.model.Hotel entityHotel);
 
   // Map from OpenAPI model to entity
   @Mapping(
       target = "id",
-      expression =
-          "java(hotel.getId() != null ? hotel.getId() : null)") // Accept String id from OpenAPI
-  // model
+      expression = "java(hotel.getId() != null ? hotel.getId().toString() : null)")
   @Mapping(target = "name", source = "name")
   @Mapping(target = "address", source = "address")
+  @Mapping(target = "city", source = "city")
+  @Mapping(target = "country", source = "country")
   @Mapping(
       target = "rating",
-      expression =
-          "java(hotel.getRating() != null ? java.math.BigDecimal.valueOf(hotel.getRating()) : null)")
+      expression = "java(hotel.getRating() != null ? java.math.BigDecimal.valueOf(hotel.getRating()) : null)")
+  @Mapping(target = "totalRooms", source = "totalRooms")
+  @Mapping(target = "pricePerNight", source = "pricePerNight")
+  @Mapping(target = "active", source = "isActive")
   com.galaxyviewtower.hotel.crud.model.Hotel toEntity(
       com.galaxyviewtower.hotel.crud.model.gen.Hotel hotel);
 }

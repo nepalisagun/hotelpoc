@@ -1,0 +1,73 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: payment-service
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/hotel_payment
+    username: postgres
+    password: postgres
+  cloud:
+    config:
+      uri: http://localhost:8888
+    discovery:
+      enabled: true
+      service-id: ${spring.application.name}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      paymentService:
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 60s
+        permittedNumberOfCallsInHalfOpenState: 3
+  ratelimiter:
+    instances:
+      paymentService:
+        limitForPeriod: 100
+        limitRefreshPeriod: 1s
+        timeoutDuration: 500ms
+  retry:
+    instances:
+      paymentService:
+        maxAttempts: 3
+        waitDuration: 1s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+  bulkhead:
+    instances:
+      paymentService:
+        maxConcurrentCalls: 20
+        maxWaitDuration: 500ms
+
+stripe:
+  api:
+    key: ${STRIPE_API_KEY:sk_test_your_test_key}
+
+logging:
+  level:
+    com.galaxyviewtower.hotel.payment: DEBUG
+    org.springframework.r2dbc: INFO

@@ -1,0 +1,44 @@
+# Git
+.git
+.gitignore
+
+# Gradle
+.gradle
+build/
+!**/build/libs/*.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+
+# Logs
+*.log
+logs/
+
+# Environment files
+.env
+*.env
+
+# Test files
+**/test/
+**/tests/
+**/src/test/
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Misc
+.DS_Store
+*.swp
+*.swo 

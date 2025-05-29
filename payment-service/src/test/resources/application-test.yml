@@ -1,0 +1,55 @@
+spring:
+  r2dbc:
+    url: r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  sql:
+    init:
+      schema-locations: classpath:schema.sql
+      mode: always
+
+server:
+  port: 8083
+
+stripe:
+  api:
+    key: sk_test_dummy
+  webhook:
+    secret: whsec_dummy
+
+paypal:
+  client:
+    id: dummy_client_id
+    secret: dummy_client_secret
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      paymentService:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+        permittedNumberOfCallsInHalfOpenState: 5
+  ratelimiter:
+    instances:
+      paymentService:
+        limitForPeriod: 10
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0s
+  retry:
+    instances:
+      paymentService:
+        maxAttempts: 3
+        waitDuration: 1s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+  bulkhead:
+    instances:
+      paymentService:
+        maxConcurrentCalls: 20
+        maxWaitDuration: 500ms
+
+logging:
+  level:
+    com.galaxyviewtower.hotel.payment: DEBUG
+    reactor.core.publisher: INFO

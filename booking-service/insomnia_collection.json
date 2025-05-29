@@ -1,0 +1,198 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2024-03-19T12:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    {
+      "_id": "req_booking_create",
+      "parentId": "wrk_booking",
+      "modified": 1710844800000,
+      "created": 1710844800000,
+      "url": "{{ baseUrl }}/api/v1/bookings",
+      "name": "Create Booking",
+      "description": "Create a new hotel booking",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"userId\": \"user123\",\n\t\"hotelId\": \"hotel456\",\n\t\"checkIn\": \"2024-04-01\",\n\t\"checkOut\": \"2024-04-05\",\n\t\"rooms\": 2,\n\t\"specialRequests\": \"Early check-in preferred\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1710844800000,
+      "_type": "request"
+    },
+    {
+      "_id": "req_booking_get",
+      "parentId": "wrk_booking",
+      "modified": 1710844800000,
+      "created": 1710844800000,
+      "url": "{{ baseUrl }}/api/v1/bookings/{{ bookingId }}",
+      "name": "Get Booking",
+      "description": "Get booking details by ID",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1710844800000,
+      "_type": "request"
+    },
+    {
+      "_id": "req_booking_user",
+      "parentId": "wrk_booking",
+      "modified": 1710844800000,
+      "created": 1710844800000,
+      "url": "{{ baseUrl }}/api/v1/bookings/user/{{ userId }}",
+      "name": "Get User Bookings",
+      "description": "Get all bookings for a user",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1710844800000,
+      "_type": "request"
+    },
+    {
+      "_id": "req_booking_hotel",
+      "parentId": "wrk_booking",
+      "modified": 1710844800000,
+      "created": 1710844800000,
+      "url": "{{ baseUrl }}/api/v1/bookings/hotel/{{ hotelId }}",
+      "name": "Get Hotel Bookings",
+      "description": "Get bookings for a hotel within date range",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "startDate",
+          "value": "2024-04-01",
+          "description": "Start date (YYYY-MM-DD)"
+        },
+        {
+          "name": "endDate",
+          "value": "2024-04-30",
+          "description": "End date (YYYY-MM-DD)"
+        }
+      ],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1710844800000,
+      "_type": "request"
+    },
+    {
+      "_id": "req_booking_cancel",
+      "parentId": "wrk_booking",
+      "modified": 1710844800000,
+      "created": 1710844800000,
+      "url": "{{ baseUrl }}/api/v1/bookings/{{ bookingId }}/cancel",
+      "name": "Cancel Booking",
+      "description": "Cancel an existing booking",
+      "method": "PUT",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1710844800000,
+      "_type": "request"
+    },
+    {
+      "_id": "req_booking_modify",
+      "parentId": "wrk_booking",
+      "modified": 1710844800000,
+      "created": 1710844800000,
+      "url": "{{ baseUrl }}/api/v1/bookings/{{ bookingId }}/modify",
+      "name": "Modify Booking",
+      "description": "Modify an existing booking",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"checkIn\": \"2024-04-02\",\n\t\"checkOut\": \"2024-04-06\",\n\t\"rooms\": 3,\n\t\"specialRequests\": \"Updated special requests\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1710844800000,
+      "_type": "request"
+    },
+    {
+      "_id": "req_booking_availability",
+      "parentId": "wrk_booking",
+      "modified": 1710844800000,
+      "created": 1710844800000,
+      "url": "{{ baseUrl }}/api/v1/bookings/availability",
+      "name": "Check Availability",
+      "description": "Check room availability for a hotel",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "hotelId",
+          "value": "hotel456",
+          "description": "Hotel ID"
+        },
+        {
+          "name": "checkIn",
+          "value": "2024-04-01",
+          "description": "Check-in date (YYYY-MM-DD)"
+        },
+        {
+          "name": "checkOut",
+          "value": "2024-04-05",
+          "description": "Check-out date (YYYY-MM-DD)"
+        },
+        {
+          "name": "rooms",
+          "value": "2",
+          "description": "Number of rooms"
+        }
+      ],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1710844800000,
+      "_type": "request"
+    },
+    {
+      "_id": "env_booking",
+      "parentId": "wrk_booking",
+      "modified": 1710844800000,
+      "created": 1710844800000,
+      "name": "Booking Environment",
+      "data": {
+        "baseUrl": "http://localhost:8082",
+        "bookingId": "booking123",
+        "userId": "user123",
+        "hotelId": "hotel456"
+      },
+      "dataPropertyOrder": {
+        "&": ["baseUrl", "bookingId", "userId", "hotelId"]
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1710844800000,
+      "_type": "environment"
+    },
+    {
+      "_id": "wrk_booking",
+      "parentId": null,
+      "modified": 1710844800000,
+      "created": 1710844800000,
+      "name": "Hotel Booking API",
+      "description": "API collection for hotel booking service",
+      "scope": "collection",
+      "_type": "workspace"
+    }
+  ]
+}

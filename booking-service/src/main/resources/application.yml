@@ -1,14 +1,85 @@
 server:
-  port: 8081
+  port: 8082
 
 spring:
   application:
     name: booking-service
-  kafka:
-    bootstrap-servers: kafka:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  r2dbc:
+    url: r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  sql:
+    init:
+      schema-locations: classpath:schema.sql
+      mode: always
+  flyway:
+    enabled: false
 
-crud-service:
-  url: http://crud-service:8080 # For Docker Compose
+crud:
+  service:
+    url: http://localhost:8080
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+    tryItOutEnabled: true
+    filter: true
+  packages-to-scan: com.galaxyviewtower.hotel.booking
+  paths-to-match: /api/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+      group:
+        readiness:
+          include: r2dbc
+        liveness:
+          include: r2dbc
+
+logging:
+  level:
+    root: INFO
+    com.galaxyviewtower.hotel.booking: DEBUG
+    org.springframework.r2dbc: DEBUG
+    io.r2dbc.h2: DEBUG
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      crudService:
+        failureRateThreshold: 50
+        waitDurationInOpenState: 20s
+        permittedNumberOfCallsInHalfOpenState: 5
+        slidingWindowSize: 10
+  retry:
+    instances:
+      crudService:
+        maxAttempts: 3
+        waitDuration: 500ms
+  timelimiter:
+    instances:
+      crudService:
+        timeoutDuration: 5s
+  ratelimiter:
+    instances:
+      bookingService:
+        limitForPeriod: 100
+        limitRefreshPeriod: 1m
+        timeoutDuration: 5s
+      availabilityCheck:
+        limitForPeriod: 200
+        limitRefreshPeriod: 1m
+        timeoutDuration: 5s
+      userBookings:
+        limitForPeriod: 50
+        limitRefreshPeriod: 1m
+        timeoutDuration: 5s

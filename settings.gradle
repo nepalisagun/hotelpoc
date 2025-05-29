@@ -1,5 +1,8 @@
-rootProject.name = 'hotel-backend-scaffold'
+rootProject.name = 'hotel'
 
-include 'common-dto'
-include 'crud-service'
+include 'user-service'
 include 'booking-service'
+include 'crud-service'
+include 'common-dto'
+include 'payment-service'
+include 'notification-service'

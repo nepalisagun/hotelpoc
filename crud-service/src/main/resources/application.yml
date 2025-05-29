@@ -5,34 +5,65 @@ server:
     include-binding-errors: always
     include-stacktrace: never
     include-exception: false
+  ssl:
+    enabled: true
+    key-store: classpath:keystore.p12
+    key-store-password: ${KEYSTORE_PASSWORD}
+    key-store-type: PKCS12
+    key-alias: hotel-service
+    key-password: ${KEY_PASSWORD}
 
 management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: health,metrics,info,env,caches,conditions,configprops,httptrace,loggers,threaddump
       base-path: /actuator
-      path-mapping:
-        health: health
-      discovery:
-        enabled: true
   endpoint:
     health:
       show-details: always
+      show-components: always
       probes:
         enabled: true
-      group:
-        readiness:
-          include: r2dbc
-        liveness:
-          include: ping
+    info:
+      env:
+        enabled: true
+    metrics:
+      enabled: true
   health:
     livenessState:
       enabled: true
     readinessState:
       enabled: true
-    r2dbc:
+    defaults:
       enabled: true
+  info:
+    env:
+      enabled: true
+    git:
+      enabled: true
+    build:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active:default}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      sla:
+        http.server.requests: 10ms, 50ms, 100ms, 200ms, 500ms
+  server:
+    ssl:
+      enabled: true
+      key-store: classpath:keystore.p12
+      key-store-password: ${KEYSTORE_PASSWORD}
+      key-store-type: PKCS12
+      key-alias: hotel-service
+      key-password: ${KEY_PASSWORD}
 
 spring:
   application:
@@ -49,6 +80,23 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  r2dbc:
+    url: r2dbc:h2:mem:///hoteldb
+    username: sa
+    password:
+  cloud:
+    config:
+      enabled: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${AUTH_SERVER_URL}
+          jwk-set-uri: ${AUTH_SERVER_URL}/.well-known/jwks.json
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=30m
 
 logging:
   level:
@@ -58,3 +106,128 @@ logging:
     org.springframework.r2dbc: INFO
     io.r2dbc.pool: DEBUG
     org.springframework.boot.actuate: DEBUG
+    com.galaxyviewtower.hotel.crud: DEBUG
+    io.github.resilience4j: INFO
+    org.springframework.web.reactive.function.client: DEBUG
+    org.springframework.security: INFO
+    org.springframework.web: INFO
+    io.r2dbc: INFO
+
+services:
+  user-service:
+    url: http://localhost:8081
+  booking-service:
+    url: http://localhost:8082
+  payment-service:
+    url: http://localhost:8083
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      userService:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+      bookingService:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+      paymentService:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+  retry:
+    instances:
+      userService:
+        maxAttempts: 3
+        waitDuration: 1s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+      bookingService:
+        maxAttempts: 3
+        waitDuration: 1s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+      paymentService:
+        maxAttempts: 3
+        waitDuration: 1s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operationsSorter: method
+    tagsSorter: alpha
+    tryItOutEnabled: true
+    filter: true
+    syntax-highlight:
+      activated: true
+    doc-expansion: none
+    default-models-expand-depth: -1
+    default-model-expand-depth: 3
+    display-request-duration: true
+    persist-authorization: true
+  packages-to-scan: com.galaxyviewtower.hotel.crud.controller
+  paths-to-match: /api/v1/**
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 3600000 # 1 hour
+
+app:
+  cors:
+    allowed-origins:
+      - https://hotel-frontend.example.com
+      - https://admin.hotel.example.com
+    allowed-methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
+      - OPTIONS
+    allowed-headers:
+      - Authorization
+      - Content-Type
+      - X-Requested-With
+      - X-API-Key
+    max-age: 3600
+
+  api:
+    key:
+      rotation:
+        enabled: true
+        interval: 30d
+        grace-period: 7d
+        max-keys: 3
+
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
+      expiration: 3600000 # 1 hour
+    rate-limit:
+      enabled: true
+      requests-per-second: 100
+      burst: 200
+
+  version: 1.0.0
+  cache:
+    booking:
+      name: bookingFallback
+      maxSize: 1000
+      expireAfterWrite: 30m
+    payment:
+      name: paymentFallback
+      maxSize: 1000
+      expireAfterWrite: 30m

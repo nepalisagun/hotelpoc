@@ -1,0 +1,54 @@
+spring:
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/hotel_test_db
+    username: test
+    password: test
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8081
+          jwk-set-uri: http://localhost:8081/.well-known/jwks.json
+
+app:
+  cors:
+    allowed-origins:
+      - http://localhost:3000
+    allowed-methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - PATCH
+      - OPTIONS
+    allowed-headers:
+      - Authorization
+      - Content-Type
+      - X-Requested-With
+      - X-API-Key
+    max-age: 3600
+
+  api:
+    key:
+      rotation:
+        enabled: false
+        interval: 30d
+        grace-period: 7d
+        max-keys: 3
+
+  security:
+    jwt:
+      secret: test-secret-key
+      expiration: 3600000
+    rate-limit:
+      enabled: false
+      requests-per-second: 100
+      burst: 200
+
+logging:
+  level:
+    root: INFO
+    com.galaxyviewtower.hotel: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    io.r2dbc: DEBUG
