@@ -1,0 +1,115 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-05-26T21:32:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2024.2.0",
+  "resources": [
+    {
+      "_id": "wrk_1hotelcrudapi",
+      "parentId": null,
+      "modified": 0,
+      "created": 0,
+      "name": "Hotel CRUD API",
+      "description": "Insomnia collection for Hotel CRUD API running on localhost:8081/api/v1",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "env_1hotelcrudapi",
+      "parentId": "wrk_1hotelcrudapi",
+      "modified": 0,
+      "created": 0,
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:8081/api/v1"
+      },
+      "_type": "environment"
+    },
+    {
+      "_id": "req_create_hotel",
+      "parentId": "wrk_1hotelcrudapi",
+      "modified": 0,
+      "created": 0,
+      "url": "{{ base_url }}/hotels",
+      "name": "Create Hotel",
+      "description": "Create a new hotel",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Hotel California\",\n  \"address\": \"42 Sunset Blvd\",\n  \"rating\": 5\n}"
+      },
+      "parameters": [],
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "_type": "request"
+    },
+    {
+      "_id": "req_get_all_hotels",
+      "parentId": "wrk_1hotelcrudapi",
+      "modified": 0,
+      "created": 0,
+      "url": "{{ base_url }}/hotels",
+      "name": "Get All Hotels",
+      "description": "Retrieve all hotels",
+      "method": "GET",
+      "parameters": [],
+      "headers": [],
+      "_type": "request"
+    },
+    {
+      "_id": "req_get_hotel_by_id",
+      "parentId": "wrk_1hotelcrudapi",
+      "modified": 0,
+      "created": 0,
+      "url": "{{ base_url }}/hotels/1",
+      "name": "Get Hotel by ID",
+      "description": "Retrieve a hotel by its ID (replace 1 with actual ID)",
+      "method": "GET",
+      "parameters": [],
+      "headers": [],
+      "_type": "request"
+    },
+    {
+      "_id": "req_update_hotel",
+      "parentId": "wrk_1hotelcrudapi",
+      "modified": 0,
+      "created": 0,
+      "url": "{{ base_url }}/hotels/1",
+      "name": "Update Hotel",
+      "description": "Update a hotel by its ID (replace 1 with actual ID)",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Hotel California Updated\",\n  \"address\": \"42 Sunset Blvd\",\n  \"rating\": 4\n}"
+      },
+      "parameters": [],
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "_type": "request"
+    },
+    {
+      "_id": "req_delete_hotel",
+      "parentId": "wrk_1hotelcrudapi",
+      "modified": 0,
+      "created": 0,
+      "url": "{{ base_url }}/hotels/1",
+      "name": "Delete Hotel",
+      "description": "Delete a hotel by its ID (replace 1 with actual ID)",
+      "method": "DELETE",
+      "parameters": [],
+      "headers": [],
+      "_type": "request"
+    },
+    {
+      "_id": "req_health_check",
+      "parentId": "wrk_1hotelcrudapi",
+      "modified": 0,
+      "created": 0,
+      "url": "http://localhost:8081/actuator/health",
+      "name": "Health Check",
+      "description": "Check service health",
+      "method": "GET",
+      "parameters": [],
+      "headers": [],
+      "_type": "request"
+    }
+  ]
+}

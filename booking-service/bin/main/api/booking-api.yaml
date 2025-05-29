@@ -1,0 +1,143 @@
+openapi: 3.0.3
+info:
+  title: Hotel Booking Service API
+  description: API for managing hotel bookings
+  version: 1.0.0
+servers:
+  - url: /api/v1
+    description: API v1
+paths:
+  /bookings:
+    post:
+      summary: Create a new booking
+      operationId: createBooking
+      tags:
+        - bookings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingRequest"
+      responses:
+        "201":
+          description: Booking created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+        "400":
+          description: Invalid request
+        "500":
+          description: Internal server error
+    get:
+      summary: Get all bookings
+      operationId: getBookings
+      tags:
+        - bookings
+      responses:
+        "200":
+          description: List of bookings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Booking"
+  /bookings/{bookingId}:
+    get:
+      summary: Get booking by ID
+      operationId: getBookingById
+      tags:
+        - bookings
+      parameters:
+        - name: bookingId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Booking details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+        "404":
+          description: Booking not found
+    delete:
+      summary: Cancel a booking
+      operationId: cancelBooking
+      tags:
+        - bookings
+      parameters:
+        - name: bookingId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Booking cancelled successfully
+        "404":
+          description: Booking not found
+components:
+  schemas:
+    BookingRequest:
+      type: object
+      required:
+        - guestId
+        - roomId
+        - checkInDate
+        - checkOutDate
+      properties:
+        guestId:
+          type: string
+          format: uuid
+        roomId:
+          type: string
+          format: uuid
+        checkInDate:
+          type: string
+          format: date-time
+        checkOutDate:
+          type: string
+          format: date-time
+        specialRequests:
+          type: string
+    Booking:
+      type: object
+      required:
+        - id
+        - guestId
+        - roomId
+        - checkInDate
+        - checkOutDate
+        - status
+      properties:
+        id:
+          type: string
+          format: uuid
+        guestId:
+          type: string
+          format: uuid
+        roomId:
+          type: string
+          format: uuid
+        checkInDate:
+          type: string
+          format: date-time
+        checkOutDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [PENDING, CONFIRMED, CANCELLED, COMPLETED]
+        specialRequests:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time

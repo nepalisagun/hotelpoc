@@ -12,24 +12,26 @@ public interface HotelMapper {
   @Mapping(
       target = "id",
       expression =
-          "java(entityHotel.getId() != null ? Integer.valueOf(entityHotel.getId()) : null)")
+          "java(entityHotel.getId() != null ? entityHotel.getId() : null)") // Use String for id
   @Mapping(target = "name", source = "name")
-  @Mapping(target = "address", source = "city")
+  @Mapping(target = "address", source = "address")
   @Mapping(
       target = "rating",
       expression =
-          "java(entityHotel.getPricePerNight() != null ? entityHotel.getPricePerNight().floatValue() : null)")
+          "java(entityHotel.getRating() != null ? entityHotel.getRating().floatValue() : null)")
   com.galaxyviewtower.hotel.crud.model.gen.Hotel toDto(
       com.galaxyviewtower.hotel.crud.model.Hotel entityHotel);
 
   // Map from OpenAPI model to entity
   @Mapping(
       target = "id",
-      expression = "java(hotel.getId() != null ? hotel.getId().toString() : null)")
+      expression =
+          "java(hotel.getId() != null ? hotel.getId() : null)") // Accept String id from OpenAPI
+  // model
   @Mapping(target = "name", source = "name")
-  @Mapping(target = "city", source = "address")
+  @Mapping(target = "address", source = "address")
   @Mapping(
-      target = "pricePerNight",
+      target = "rating",
       expression =
           "java(hotel.getRating() != null ? java.math.BigDecimal.valueOf(hotel.getRating()) : null)")
   com.galaxyviewtower.hotel.crud.model.Hotel toEntity(

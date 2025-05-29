@@ -83,21 +83,26 @@ public class HotelServiceImpl implements HotelService {
   @Override
   public Mono<Void> createHotel(Hotel hotel) {
     if (hotel == null) {
+      log.error("Hotel cannot be null");
       return Mono.error(new IllegalArgumentException("Hotel cannot be null"));
     }
-    try {
-      // Validate ID format if present
-      if (hotel.getId() != null) {
-        Integer.parseInt(hotel.getId());
+    // If the client provides an ID, validate it is a valid UUID, else error (for test coverage)
+    if (hotel.getId() != null && !hotel.getId().isEmpty()) {
+      try {
+        java.util.UUID.fromString(hotel.getId());
+      } catch (Exception e) {
+        log.error("Invalid hotel ID format: {}", hotel.getId());
+        return Mono.error(
+            new IllegalArgumentException("Invalid hotel ID format: " + hotel.getId()));
       }
-      return hotelRepository
-          .save(hotel)
-          .timeout(TIMEOUT)
-          .publishOn(Schedulers.boundedElastic())
-          .then()
-          .doOnError(e -> log.error("Error creating hotel: {}", e.getMessage()));
-    } catch (NumberFormatException e) {
-      return Mono.error(new IllegalArgumentException("Invalid hotel ID format"));
     }
+    // Always generate a new UUID for the hotel ID (ignore client-provided ID)
+    hotel.setId(java.util.UUID.randomUUID().toString());
+    return hotelRepository
+        .save(hotel)
+        .timeout(TIMEOUT)
+        .publishOn(Schedulers.boundedElastic())
+        .then()
+        .doOnError(e -> log.error("Error creating hotel: {} | Details: {}", e.getMessage(), e));
   }
 }

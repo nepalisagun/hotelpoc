@@ -6,10 +6,10 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Data
-@Table("hotel") // Maps to the H2 table
+@Table("hotels") // Maps to the H2 table (plural)
 public class Hotel {
   @Id private String id;
   private String name;
-  private String city;
-  private BigDecimal pricePerNight;
+  private String address; // was city
+  private BigDecimal rating; // was pricePerNight
 }
